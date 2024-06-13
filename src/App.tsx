@@ -5,6 +5,10 @@ import NavBar from "./components/Nav Bar/NavBar";
 import Home from "./components/Main/Home";
 import FavouriteLists from "./components/Nav Bar/FavouriteLists";
 
+const user = {
+      username: "sameh13652@gmail.com",
+      password: "sameh123"
+    }
 function App() {
   const [count, setCount] = useState(0);
 
