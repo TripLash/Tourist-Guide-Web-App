@@ -1,24 +1,27 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import NavBar from "./components/NavBar";
-import Login from "./components/Login";
-import apiService from "./services/apiService";
-import SignIn from "./components/SignIn";
-import ForgetPassword from "./components/ForgetPassword";
+import React, { useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+// import "./App.css";
+import NavBar from "./components/Nav Bar/NavBar";
+import Home from "./components/Main/Home";
+import FavouriteLists from "./components/Nav Bar/FavouriteLists";
 
 const user = {
       username: "sameh13652@gmail.com",
       password: "sameh123"
     }
 function App() {
+  const [count, setCount] = useState(0);
 
   return (
-    <div>
-      {/* <NavBar></NavBar> */}
-      <Login ></Login>
-      {/* <SignIn></SignIn> */}
-      {/* <ForgetPassword /> */}
-    </div>
+    <>
+      <BrowserRouter>
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/FavouriteLists" element={<FavouriteLists />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
