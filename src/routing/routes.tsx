@@ -4,8 +4,10 @@ import SignIn from "../components/SignIn";
 import ForgetPassowrd from "../components/ForgetPassword";
 import OTPVerification from "../components/OTPVerification";
 import ChangePassword from "../components/ChangePassword"; 
+import Tour from "../components/Tour";
 
 const router = createBrowserRouter([
+  { path: "/", element: <Tour /> },
   { path: "/", element: <Login /> },
   { path: "/Login", element: <Login /> },
   { path: "/SignIn", element: <SignIn /> },
