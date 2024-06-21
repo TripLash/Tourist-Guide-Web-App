@@ -17,7 +17,11 @@
     "@mui/icons-material": "^5.15.19",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.8",
+<<<<<<< HEAD
     "framer-motion": "^11.2.11",
+=======
+    "framer-motion": "^11.1.7",
+>>>>>>> 9b6e6b32381cdc1bf4dfb55ada76d8e0c6d05810
     "react": "^18.3.1",
     "react-calendar": "^5.0.0",
     "react-country-flag": "^3.1.0",
