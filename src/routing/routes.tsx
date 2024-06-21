@@ -27,7 +27,14 @@ const router = createBrowserRouter([
       </AuthProvider>
     ),
     children: [
-      { path: "/", element: <Home /> },
+      {
+        path: "/",
+        element: (
+          <AuthProvider>
+            <Home />
+          </AuthProvider>
+        ),
+      },
       { path: "/Login", element: <Login /> },
       { path: "/SignIn", element: <SignIn /> },
       { path: "/ForgetPassword", element: <ForgetPassword /> },
@@ -41,25 +48,25 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-    ],
-  },
-  {
-    path: "/",
-    element: (
-      <AuthProvider>
-        <AdminProtectedRoute>
-          <AdminDashboard />
-        </AdminProtectedRoute>
-      </AuthProvider>
-    ),
-    children: [
-      { path: "users", element: <UserList /> },
-      { path: "tour-guides", element: <TourGuideList /> },
       {
-        path: "tour-guide-applications",
-        element: <TourGuideApplications />,
+        path: "/",
+        element: (
+          <AuthProvider>
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>
+          </AuthProvider>
+        ),
+        children: [
+          { path: "users", element: <UserList /> },
+          { path: "tour-guides", element: <TourGuideList /> },
+          {
+            path: "tour-guide-applications",
+            element: <TourGuideApplications />,
+          },
+          { path: "favourites", element: <FavouriteList /> },
+        ],
       },
-      { path: "favourites", element: <FavouriteList /> },
     ],
   },
 ]);

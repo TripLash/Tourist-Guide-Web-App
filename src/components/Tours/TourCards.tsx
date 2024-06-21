@@ -22,6 +22,7 @@ import RecommendedTours from "./RecommendedTours";
 import useFavorite from "../Favourite/useFavourite";
 import FavoriteModal from "../Favourite/FavouriteModal";
 import FavouriteLists from "../Nav Bar/FavouriteLists";
+
 interface Tour {
   _id: string;
   title: string;
