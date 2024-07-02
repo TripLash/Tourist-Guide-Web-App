@@ -47,11 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         if (newToken && userTypes) {
           const isAdmin = userTypes.includes("admin");
 
-<<<<<<< HEAD
-          setToken(newToken); //
-=======
           setToken(newToken);
->>>>>>> 9b6e6b32381cdc1bf4dfb55ada76d8e0c6d05810
           setIsAdmin(isAdmin);
 
           localStorage.setItem("token", newToken);

@@ -71,10 +71,7 @@ const OTPVerification = () => {
             .post("verify-code/", { code: code, email: email })
             .then((res) => {
               console.log(res.data.status);
-<<<<<<< HEAD
-=======
               console.log(res.data);
->>>>>>> 9b6e6b32381cdc1bf4dfb55ada76d8e0c6d05810
               navigate("/ChangePassword", {
                 state: { email: email, Code: code },
               });

@@ -16,6 +16,8 @@ import TourGuideApplications from "../components/Admin Dashboard/TourGuideApplic
 import UserList from "../components/Admin Dashboard/UserList";
 import TourGuideList from "../components/Admin Dashboard/TourGuideList";
 import FavouriteList from "../components/Admin Dashboard/FavouriteList";
+import Tour from "../components/Tours/Tour";
+import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
 
 const router = createBrowserRouter([
   {
@@ -27,9 +29,12 @@ const router = createBrowserRouter([
       </AuthProvider>
     ),
     children: [
-<<<<<<< HEAD
-      { path: "/", element: <Home /> },
-=======
+      {
+        path: "/TourGuideInfo",
+        element: (
+         <TourGuideInfo />
+        ),
+      },
       {
         path: "/",
         element: (
@@ -38,7 +43,7 @@ const router = createBrowserRouter([
           </AuthProvider>
         ),
       },
->>>>>>> 9b6e6b32381cdc1bf4dfb55ada76d8e0c6d05810
+      { path: "/Tour", element: <Tour /> },
       { path: "/Login", element: <Login /> },
       { path: "/SignIn", element: <SignIn /> },
       { path: "/ForgetPassword", element: <ForgetPassword /> },
@@ -52,37 +57,18 @@ const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-<<<<<<< HEAD
-    ],
-  },
-  {
-    path: "/",
-    element: (
-      <AuthProvider>
-        <AdminProtectedRoute>
-          <AdminDashboard />
-        </AdminProtectedRoute>
-      </AuthProvider>
-    ),
-    children: [
-      { path: "users", element: <UserList /> },
-      { path: "tour-guides", element: <TourGuideList /> },
       {
-        path: "tour-guide-applications",
-        element: <TourGuideApplications />,
-      },
-      { path: "favourites", element: <FavouriteList /> },
-=======
-      {
-        path: "/",
+        path: "/AdminDashboard",
         element: (
-          <AuthProvider>
-            <AdminProtectedRoute>
-              <AdminDashboard />
-            </AdminProtectedRoute>
-          </AuthProvider>
+          <AdminDashboard />
+          // <AuthProvider>
+          //   <AdminProtectedRoute>
+          //     <AdminDashboard />
+          //   </AdminProtectedRoute>
+          // </AuthProvider>
         ),
         children: [
+          { path: "AdminDashboard", element: <AdminDashboard /> },
           { path: "users", element: <UserList /> },
           { path: "tour-guides", element: <TourGuideList /> },
           {
@@ -92,7 +78,6 @@ const router = createBrowserRouter([
           { path: "favourites", element: <FavouriteList /> },
         ],
       },
->>>>>>> 9b6e6b32381cdc1bf4dfb55ada76d8e0c6d05810
     ],
   },
 ]);
