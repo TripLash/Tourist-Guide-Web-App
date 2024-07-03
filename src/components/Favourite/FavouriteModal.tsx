@@ -14,35 +14,25 @@ import {
   Image,
   Text,
   useDisclosure,
+  Button,
+  Flex,
+  IconButton,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Server_Url } from "../Main/root";
 import { AuthContext } from "../Authentication/AuthContext";
 import NewListModal from "./NewListModal";
-
-interface Tour {
-  _id: string;
-  title: string;
-  image: string;
-  location: string;
-  price: number;
-  ratingsAverage: number;
-  faviorate: boolean;
-  tourCategory: string;
-  city: string;
-  country: string;
-}
-
-interface FavoriteList {
-  name: string;
-  tours: Tour[];
-}
+import { useToast } from "@chakra-ui/react";
+import { Tour } from "../Tours/Types/Tour";
+import { List } from "./Types/List";
 
 interface FavoriteModalProps {
   isOpen: boolean;
   onClose: () => void;
   tour: Tour | null;
-  onToggleFavorite: (tour: Tour, listName: string) => void;
+  onToggleFavorite: (tour: Tour, listId: string) => void;
+  setSelectedListId: (listId: string | null) => void;
+  // handleSelectList: (listId: string) => void;
 }
 
 const FavoriteModal: React.FC<FavoriteModalProps> = ({
@@ -50,16 +40,18 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
   onClose,
   tour,
   onToggleFavorite,
+  setSelectedListId,
 }) => {
-  const [favoriteLists, setFavoriteLists] = useState<FavoriteList[]>([]);
+  const [favoriteLists, setFavoriteLists] = useState<List[]>([]);
+
   const [selectedList, setSelectedList] = useState<string | null>(null);
   const {
     isOpen: isNewListModalOpen,
     onOpen: onOpenNewListModal,
     onClose: onCloseNewListModal,
   } = useDisclosure();
-
   const authContext = useContext(AuthContext);
+  const toast = useToast();
 
   useEffect(() => {
     const fetchFavoriteLists = async () => {
@@ -68,10 +60,8 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
         const response = await axios.get(`${Server_Url}/api/get-user-lists`, {
           headers: { Authorization: `Bearer ${authContext.token}` },
         });
-        const lists = response.data.data.lists.map((list: any) => ({
-          name: list.name,
-          tours: list.tours,
-        }));
+        console.log("API response:", response.data);
+        const lists = response.data.data.lists;
         setFavoriteLists(lists);
       } catch (error) {
         console.error("Error fetching favorite lists:", error);
@@ -81,26 +71,53 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
     fetchFavoriteLists();
   }, [authContext]);
 
-  useEffect(() => {
-    if (tour) {
-      setSelectedList(tour.faviorate ? "My Favorite List" : null);
-    }
-  }, [tour]);
+  const handleFavoriteClick = (listId: string) => {
+    if (!tour) return;
 
-  const handleCheckboxChange = (listName: string) => {
-    setSelectedList(listName);
-    if (tour) {
-      onToggleFavorite(tour, listName);
+    const selectedList = favoriteLists.find((list) => list._id === listId);
+    console.log("Selected List:", selectedList);
+    console.log("Tour to be checked:", tour);
+    const tourId = String(tour._id);
+    const tourExistsInList = selectedList
+      ? selectedList.tours.some((t) => String(t) === tourId)
+      : false;
+    console.log(
+      `Checking if tour ${tour._id} exists in list ${listId}: ${tourExistsInList}`
+    );
+
+    if (!tourExistsInList) {
+      onToggleFavorite(tour, listId);
+      toast({
+        description: `${tour.title} is added successfully to ${selectedList?.name} list .`,
+        position: "top",
+        status: "success",
+        duration: 4000,
+        isClosable: true,
+      });
+    } else {
+      toast({
+        description: `${tour.title} already exists in ${selectedList?.name} list .`,
+        position: "top",
+
+        status: "info",
+        duration: 4000,
+        isClosable: true,
+      });
+      setSelectedListId(listId);
+      onClose();
     }
   };
 
   const handleListCreated = (listName: string) => {
-    setFavoriteLists((prev) => [...prev, { name: listName, tours: [] }]);
+    setFavoriteLists((prev) => [
+      ...prev,
+      { _id: "new-id", name: listName, tours: [] },
+    ]);
   };
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader
@@ -122,7 +139,7 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
               color="blue.500"
               cursor="pointer"
               onClick={onOpenNewListModal}
-              fontSize={"m"}
+              fontSize={"s"}
             >
               New list
             </Text>
@@ -136,21 +153,29 @@ const FavoriteModal: React.FC<FavoriteModalProps> = ({
                       boxSize="40px"
                       bg={!list.tours.length ? "gray.200" : "transparent"}
                     >
-                      {list.tours.length > 0 && (
-                        <Image
-                          src={list.tours[0].image}
-                          alt={list.name}
-                          boxSize="40px"
-                          objectFit="cover"
-                        />
-                      )}
+                      {list.tours.length > 0 &&
+                        list.tours[0]?.photos?.length > 0 && (
+                          <Image
+                            src={list.tours[0].photos[0]}
+                            // alt={list.name}
+                            boxSize="40px"
+                            objectFit="cover"
+                          />
+                        )}
                     </Box>
-                    <Text>{list.name}</Text>
+                    <Flex
+                      key={list._id}
+                      alignItems="center"
+                      justifyContent="space-between"
+                      p={2}
+                      // borderBottom="1px solid #eaeaea"
+                      cursor="pointer"
+                      _hover={{ backgroundColor: "#f9f9f9" }}
+                      onClick={() => handleFavoriteClick(list._id)}
+                    >
+                      <Text>{list.name}</Text>
+                    </Flex>
                   </HStack>
-                  <Checkbox
-                    isChecked={selectedList === list.name}
-                    onChange={() => handleCheckboxChange(list.name)}
-                  />
                 </HStack>
               ))}
             </VStack>

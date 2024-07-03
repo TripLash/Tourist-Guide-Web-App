@@ -10,38 +10,21 @@ import {
   Text,
   Box,
   Button,
-  Image,
   IconButton,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   Flex,
+  Image,
 } from "@chakra-ui/react";
 import { AuthContext } from "../Authentication/AuthContext";
 import TourList from "../Favourite/TourList";
 import NewListModal from "../Favourite/NewListModal";
+import { useNavigate } from "react-router-dom";
+import { Tour } from "../Tours/Types/Tour";
 
-interface List {
-  _id: string;
-  name: string;
-  user: string;
-  tours: string[];
-  __v: number;
-}
-
-interface Tour {
-  _id: string;
-  title: string;
-  image: string;
-  location: string;
-  price: number;
-  ratingsAverage: number;
-  faviorate: boolean;
-  tourCategory: string;
-  city: string;
-  country: string;
-}
+import { List } from "../Favourite/Types/List";
 
 const FavouriteLists = () => {
   const [lists, setLists] = useState<List[]>([]);
@@ -53,6 +36,7 @@ const FavouriteLists = () => {
   const [newListName, setNewListName] = useState("");
 
   const authContext = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleOpenNewListModal = () => {
     setIsNewListModalOpen(true);
@@ -64,18 +48,13 @@ const FavouriteLists = () => {
 
   useEffect(() => {
     const fetchLists = async () => {
-      if (!authContext || !authContext.token) {
-        console.error("No auth token found");
-        return;
-      }
+      if (!authContext || !authContext.token) return;
       try {
         const response = await axios.get(`${Server_Url}/api/get-user-lists`, {
           headers: { Authorization: `Bearer ${authContext.token}` },
         });
-        const listNames = response.data.data.lists.map(
-          (list: any) => list.name
-        );
-        setFavoriteLists(listNames);
+
+        setFavoriteLists(response.data.data.lists);
         console.log("API response:", response.data);
 
         if (response.data && Array.isArray(response.data.data.lists)) {
@@ -91,50 +70,18 @@ const FavouriteLists = () => {
     fetchLists();
   }, [authContext]);
 
-  const handleToggleFavorite = async (tour: Tour, listName: string) => {
+  async function handleDeleteList(listId: string): Promise<void> {
     try {
       if (!authContext || !authContext.token) return;
 
-      const response = await axios.post(
-        `${Server_Url}/api/update-list/662efcd27cde4b7520938a65`,
-        {
-          tourId: tour._id,
-          listName,
-        },
+      const response = await axios.delete(
+        `${Server_Url}/api/delete-list/${listId}`,
         {
           headers: { Authorization: `Bearer ${authContext.token}` },
         }
       );
-
-      if (response.data.success) {
-        setLists((prevLists) =>
-          prevLists.map((list) =>
-            list.name === listName
-              ? {
-                  ...list,
-                  tours: list.tours.some((t) => t === tour._id)
-                    ? list.tours.filter((t) => t !== tour._id)
-                    : [...list.tours, tour._id],
-                }
-              : list
-          )
-        );
-      } else {
-        console.error("Failed to toggle favorite:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
-  };
-  async function handleDeleteList(listId: string): Promise<void> {
-    try {
-      const response = await axios.delete(
-        `${Server_Url}/api/update-list/${listId}`,
-        {
-          // headers: { Authorization: `Bearer ${authContext.token}` },
-        }
-      );
-      if (response.data.success) {
+      console.log("Delete List Response:", response.data);
+      if (response.data.status === "success") {
         setLists((prevLists) =>
           prevLists.filter((list) => list._id !== listId)
         );
@@ -145,6 +92,7 @@ const FavouriteLists = () => {
       console.error("Error deleting list:", error);
     }
   }
+
   const handleListClick = async (list: List) => {
     try {
       if (!authContext || !authContext.token) return;
@@ -160,12 +108,20 @@ const FavouriteLists = () => {
         setSelectedList(response.data.list);
 
         if (Array.isArray(response.data.list.tours)) {
-          setSelectedTours(response.data.list.tours);
+          const tourDetails = await Promise.all(
+            response.data.list.tours.map(async (tourId: string) => {
+              const tourResponse = await axios.get(
+                `${Server_Url}/api/get-tour/${tourId}`
+              );
+              return tourResponse.data.data;
+            })
+          );
+          setSelectedTours(tourDetails);
         } else {
-          console.error("Invalid tours data format:", response.data.list.tours);
+          console.error("Invalid :", response.data.list.tours);
         }
       } else {
-        console.error("Failed to fetch list details:", response.data.message);
+        console.error("Failed :", response.data.message);
       }
     } catch (error) {
       console.error("Error fetching list details:", error);
@@ -223,17 +179,25 @@ const FavouriteLists = () => {
                 onClick={() => handleListClick(list)}
                 cursor="pointer"
               >
+                <Box
+                  position="relative"
+                  display="inline-block"
+                  bg={!list.tours.length ? "gray.200" : "transparent"}
+                >
+                  {list.tours.length > 0 &&
+                    list.tours[0]?.photos?.length > 0 && (
+                      <Image
+                        src={list.tours[0].photos[0]}
+                        // alt={list.name}
+                        borderRadius="md"
+                        objectFit="cover"
+                      />
+                    )}
+                </Box>
                 <Heading as="h2" size="md" mb={2}>
                   {list.name}
                 </Heading>
                 <Text>{list.tours.length} tours</Text>
-                {selectedTours.length > 0 && (
-                  <Image
-                    src={selectedTours[0].image}
-                    alt={selectedTours[0].title}
-                    mb={2}
-                  />
-                )}
               </Box>
             ))}
           </SimpleGrid>
@@ -242,7 +206,7 @@ const FavouriteLists = () => {
             tours={selectedTours}
             listName={selectedList.name}
             listId={selectedList._id}
-            onToggleFavorite={handleToggleFavorite}
+            // onToggleFavorite={handleToggleFavorite}
             onDeleteList={handleDeleteList}
           />
         )}

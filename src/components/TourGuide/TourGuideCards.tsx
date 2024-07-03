@@ -31,6 +31,7 @@ interface TourGuide {
   _id: string;
   firstname: string;
   lastname: string;
+  photo: string;
   identity_photo: string;
   languages: Language[];
   rate: number;
@@ -58,7 +59,10 @@ const TourGuideCards = () => {
                 ? tourGuide.user.firstname || "Unknown"
                 : "Unknown",
               lastname: tourGuide.user ? tourGuide.user.lastname || "" : "",
-              identity_photo: tourGuide.identity_photo || "",
+              identity_photo: tourGuide.user
+                ? tourGuide.user.identity_photo || ""
+                : "",
+              photo: tourGuide.user ? tourGuide.user.photo || "" : "",
               location: tourGuide.location || "Unknown",
               price: tourGuide.dayPrice || 0,
               rate: tourGuide.rate || 0,
@@ -109,7 +113,7 @@ const TourGuideCards = () => {
                 objectFit="cover"
                 width="100%"
                 height="100%"
-                src={tourGuide.identity_photo}
+                src={tourGuide.photo}
                 alt={`${tourGuide.firstname} ${tourGuide.lastname}`}
                 fallbackSrc={fallbackImageUrl}
               />

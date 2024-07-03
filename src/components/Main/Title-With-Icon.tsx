@@ -1,6 +1,6 @@
 // tour and tourguide sections in home
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Center,
@@ -14,6 +14,8 @@ import { FaUser } from "react-icons/fa";
 import TourIcon from "@mui/icons-material/Tour";
 import TourCards from "../Tours/TourCards";
 import TourGuideCards from "../TourGuide/TourGuideCards";
+import { AuthContext } from "../Authentication/AuthContext";
+import SignedInTourCards from "../Tours/SignedInTourCards";
 
 interface TitleWithIconProps {
   title: string;
@@ -68,6 +70,12 @@ const TitleWithIcon: React.FC<TitleWithIconProps> = ({
 
 const Navi = () => {
   const [selectedComponent, setSelectedComponent] = useState<string>("Tours");
+  const authContext = useContext(AuthContext);
+  // useEffect(() => {
+  //   if (!authContext || !authContext.token) {
+  //     console.error("No auth token found");
+  //   }
+  // }, [authContext]);
   return (
     <Box>
       <center>
@@ -87,7 +95,14 @@ const Navi = () => {
         </HStack>
       </center>
       <Container maxW="container.xl" mt={8}>
-        <Box>{selectedComponent === "Tours" && <TourCards />}</Box>
+        <Box>
+          {selectedComponent === "Tours" &&
+            (authContext && authContext.token ? (
+              <SignedInTourCards />
+            ) : (
+              <TourCards />
+            ))}
+        </Box>
       </Container>
       <Container maxW="container.xl" mt={8}>
         <Box>{selectedComponent === "Tour Guides" && <TourGuideCards />}</Box>

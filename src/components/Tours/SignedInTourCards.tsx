@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Box,
@@ -17,20 +17,41 @@ import React from "react";
 import { FaHeart } from "react-icons/fa";
 import { Server_Url } from "../Main/root";
 import ToursFilters from "../Filter/toursFilters";
-
+import useFavorite from "../Favourite/useFavourite";
+import FavoriteModal from "../Favourite/FavouriteModal";
+import FavouriteLists from "../Nav Bar/FavouriteLists";
+import { AuthContext } from "../Authentication/AuthContext";
 import { Tour } from "../Tours/Types/Tour";
-import { useNavigate } from "react-router-dom";
 
-const TourCards = () => {
-  const [tours, setTours] = useState<Tour[]>([]);
-  const navigate = useNavigate();
+const SignedInTourCards = () => {
+  const {
+    tours,
+    setTours,
+    handleFavorite,
+    isModalOpen,
+    closeModal,
+    selectedTour,
+    handleToggleFavorite,
+    setSelectedListId,
+    selectedListId,
+    setSelectedTour,
+    openModal,
+  } = useFavorite([]);
 
+  const authContext = useContext(AuthContext);
   useEffect(() => {
     const fetchTours = async () => {
+      if (!authContext || !authContext.token) return;
       try {
-        const response = await axios.get(`${Server_Url}/api/get-all-tours`);
+        const response = await axios.get(
+          `${Server_Url}/api/get-all-tours-protect/`,
+          {
+            headers: { Authorization: `Bearer ${authContext.token}` },
+          }
+        );
         if (response.data.status === "success") {
           const tourData = response.data.data;
+
           setTours(tourData);
           console.log(tourData);
         } else {
@@ -42,8 +63,11 @@ const TourCards = () => {
     };
 
     fetchTours();
-  }, [setTours]);
+  }, [authContext, setTours]);
 
+  const handleFavoriteClick = (tour: Tour) => {
+    handleFavorite(tour);
+  };
   return (
     <>
       <Heading fontSize="xl" mb={6}>
@@ -74,15 +98,18 @@ const TourCards = () => {
                     aria-label="Favorite"
                     icon={
                       <FaHeart
-                        color="rgba(0, 0, 0, 0.2)"
-                        // {
-                        //   tour.faviorate ? "#FF3232" : "rgba(0, 0, 0, 0.2)"
-                        // }
+                        color={
+                          tour.faviorate ? "#FF3232" : "rgba(0, 0, 0, 0.2)"
+                        }
                         size={18}
                       />
                     }
                     borderRadius={32}
-                    onClick={() => navigate(`/Login`)}
+                    onClick={() => {
+                      console.log("Favorite icon clicked for tour:", tour);
+
+                      handleFavoriteClick(tour);
+                    }}
                     bg={"white"}
                   />
                 </Box>
@@ -132,7 +159,16 @@ const TourCards = () => {
           </>
         ))}
       </Grid>
+      {selectedTour && (
+        <FavoriteModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          tour={selectedTour}
+          onToggleFavorite={handleToggleFavorite}
+          setSelectedListId={setSelectedListId}
+        />
+      )}
     </>
   );
 };
-export default TourCards;
+export default SignedInTourCards;

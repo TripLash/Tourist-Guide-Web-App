@@ -18,7 +18,7 @@ const CalenderSearchInput = ({ placeholder }) => {
   const [inputValue, setInputValue] = useState("");
 
   const formatDate = (date) => {
-    return date.toLocaleDateString("en-GB"); // Format as "DD/MM/YYYY"
+    return date.toLocaleDateString("en-GB");
   };
   const onChange = (newDate) => {
     setDate(newDate);

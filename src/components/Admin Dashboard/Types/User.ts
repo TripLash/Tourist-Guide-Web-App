@@ -4,6 +4,8 @@ export interface User {
   firstname: string;
   lastname: string;
   email: string;
+  city: string;
+  country: string;
   mobile: number;
   user_types: string[];
   language: string;
@@ -12,4 +14,6 @@ export interface User {
   __v: number;
   code_timestamps: string;
   user_tours: string[];
+  profilePicture?: string;
+  photo: string;
 }

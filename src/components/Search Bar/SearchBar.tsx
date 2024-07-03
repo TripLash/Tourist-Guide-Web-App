@@ -6,7 +6,7 @@ import PlaceSearchInput from "./PlaceSearchInput";
 
 const SearchBar: React.FC = () => {
   return (
-    <Center zIndex={"999"} position="relative">
+    <Center zIndex={"999"} position="relative" mt={4}>
       <Flex flexWrap="wrap" alignItems="center" mb={6}>
         <Box
           width={"700px"}

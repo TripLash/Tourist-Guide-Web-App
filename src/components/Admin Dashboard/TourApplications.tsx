@@ -22,65 +22,60 @@ import {
   InputGroup,
   InputLeftElement,
   useToast,
-  useColorModeValue,
-  Text,
 } from "@chakra-ui/react";
 import { Server_Url } from "../Main/root";
+import { FaEllipsisV, FaPlus } from "react-icons/fa";
 import { User } from "./Types/User";
 import axios from "axios";
 import { AuthContext } from "../Authentication/AuthContext";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import {
-  BsFillArrowLeftCircleFill,
-  BsArrowRightCircleFill,
-  BsSearch,
-} from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
-import { _mainColor } from "../Main/Colors";
-import { Tour } from "../Tours/Types/Tour";
-import { Guide } from "./Types/Guide";
-import { FaChildReaching } from "react-icons/fa6";
-import { IoMdMan } from "react-icons/io";
-import { PiBabyBold } from "react-icons/pi";
+import { BsFillArrowLeftCircleFill } from "react-icons/bs";
+import { BsArrowRightCircleFill } from "react-icons/bs";
 
-interface guideApplication {
+import { useNavigate } from "react-router-dom";
+import { BsSearch } from "react-icons/bs";
+import { _mainColor, _mainTxtColor, _secTxtColor } from "../Main/Colors";
+import { Tour } from "../Tours/Types/Tour";
+
+interface tourApplication {
   creation_date: string;
   _id: string;
   tour: Tour[];
   user: User[];
-  tour_guide: Guide[];
-  participants: number;
-  adult_price: number;
-  child_price: number;
-  infant_price: number;
+  members: number;
+  total_price: number;
   start_date: string;
   end_date: string;
   start_time: number;
   status: string;
 }
-
-type StatusType = "pending" | "active" | "upcomming" | "upcoming" | "previous";
-
-const TourGuideApplications: React.FC = () => {
-  const [applications, setApplications] = useState<guideApplication[]>([]);
+type StatusType = "pending" | "active" | "upcomming" | "previous";
+const TourApplications: React.FC = () => {
+  const [applications, setApplications] = useState<tourApplication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [usersPerPage] = useState<number>(7);
+  const [usersPerPage] = useState<number>(8);
   const [filterTypes, setFilterTypes] = useState<string>("All");
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const toast = useToast();
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const filteredApplications = applications.filter((app) =>
+    filterTypes === "All" ? true : app.status === filterTypes
+  );
+
+  const currentApplications = filteredApplications.slice(
+    indexOfFirstUser,
+    indexOfLastUser
+  );
   const statusColors: Record<StatusType, string> = {
     pending: "yellow",
     active: "green",
     upcomming: "blue",
-    upcoming: "blue",
     previous: "gray",
   };
-
-  const adultPriceColor = useColorModeValue("blue.500", "blue.200");
-  const childPriceColor = useColorModeValue("orange.500", "orange.200");
-  const infantPriceColor = useColorModeValue("pink.500", "pink.200");
 
   useEffect(() => {
     if (!authContext || !authContext.token) {
@@ -89,49 +84,34 @@ const TourGuideApplications: React.FC = () => {
       return;
     }
 
-    const allGuideApplications = async () => {
+    const allTourAplications = async () => {
       try {
         const response = await axios.get(
-          `${Server_Url}/api/get-all-guides-applications`,
+          `${Server_Url}/api/get-all-tours-applications`,
           { headers: { Authorization: `Bearer ${authContext.token}` } }
         );
-        setApplications(response.data.guidesApp);
+        console.log(response.data.status);
+        setApplications(response.data.toursApp);
       } catch (error) {
         console.error("error", error);
-        toast({
-          title: "Error fetching applications.",
-          description: "Please try again later.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
       } finally {
         setLoading(false);
       }
     };
-    allGuideApplications();
-  }, [authContext, toast]);
-
-  const filteredApplications = applications.filter((app) =>
-    filterTypes === "All" ? true : app.status === filterTypes
-  );
-
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentApplications = filteredApplications.slice(
-    indexOfFirstUser,
-    indexOfLastUser
-  );
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+    allTourAplications();
+  }, [authContext]);
 
   return (
     <>
       <Box>
         <Box
-          display="flex"
+          display={"flex"}
           mb={4}
           alignItems={{ base: "stretch", md: "center" }}
+          // border="1px solid #EEF5FF"
+          // borderRadius="xl"
+          // boxShadow="sm"
+          // p={"16px 10px"}
         >
           <InputGroup flex="1" mr={{ base: 0, md: 3 }}>
             <InputLeftElement
@@ -192,15 +172,6 @@ const TourGuideApplications: React.FC = () => {
                   color={"rgb(102, 112, 133)"}
                   fontSize={"13px"}
                 >
-                  Guide
-                </Th>
-                <Th
-                  position="sticky"
-                  top={0}
-                  zIndex={2}
-                  color={"rgb(102, 112, 133)"}
-                  fontSize={"13px"}
-                >
                   #Members
                 </Th>
                 <Th position="sticky" top={0} zIndex={2}>
@@ -222,8 +193,8 @@ const TourGuideApplications: React.FC = () => {
                       <MenuItem onClick={() => setFilterTypes("active")}>
                         Active
                       </MenuItem>
-                      <MenuItem onClick={() => setFilterTypes("upcomming")}>
-                        Upcomming
+                      <MenuItem onClick={() => setFilterTypes("request")}>
+                        Request
                       </MenuItem>
                       <MenuItem onClick={() => setFilterTypes("pending")}>
                         Pending
@@ -241,74 +212,39 @@ const TourGuideApplications: React.FC = () => {
                   color={"rgb(102, 112, 133)"}
                   fontSize={"13px"}
                 >
-                  Price
+                  Total Price
                 </Th>
               </Tr>
             </Thead>
             <Tbody>
-              {loading ? (
-                <Tr>
-                  <Td colSpan={7}>
-                    <Center>
-                      <Spinner size="lg" />
-                    </Center>
+              {applications.map((app, index) => (
+                <Tr
+                  key={app._id}
+                  sx={{
+                    "& > td": { paddingY: "15px" },
+                    bg: "white",
+                  }}
+                  margin={"20px"}
+                  onClick={() => navigate(`/application/${app._id}`)}
+                  _hover={{ bg: "gray.100", cursor: "pointer" }}
+                >
+                  <Td>{indexOfFirstUser + index + 1}</Td>
+                  <Td>{`${app.tour} `}</Td>
+                  <Td>{`${app.user}`}</Td>
+                  <Td>{app.members}</Td>
+                  <Td>
+                    <Badge
+                      p={2}
+                      colorScheme={statusColors[app.status as StatusType]}
+                    >
+                      {app.status}
+                    </Badge>
                   </Td>
+                  <Td>{app.total_price}</Td>
+                  {/* <Td>{new Date(user.createdAt).toLocaleDateString()}</Td>
+                <Td>{new Date(user.updatedAt).toLocaleDateString()}</Td> */}
                 </Tr>
-              ) : (
-                currentApplications.map((app, index) => (
-                  <Tr
-                    key={app._id}
-                    sx={{ "& > td": { paddingY: "15px" }, bg: "white" }}
-                    onClick={() => navigate(`/guide-application/${app._id}`)}
-                    _hover={{ bg: "gray.100", cursor: "pointer" }}
-                  >
-                    <Td>{indexOfFirstUser + index + 1}</Td>
-                    <Td>{`${app.tour}`}</Td>
-                    <Td>{`${app.user}`}</Td>
-                    <Td>{`${app.tour_guide}`}</Td>
-                    <Td>{app.participants}</Td>
-                    <Td>
-                      <Badge
-                        p={2}
-                        colorScheme={statusColors[app.status as StatusType]}
-                      >
-                        {app.status}
-                      </Badge>
-                    </Td>
-                    <Td>
-                      <Text
-                        color={adultPriceColor}
-                        fontWeight="bold"
-                        fontSize="md"
-                      >
-                        <Flex>
-                          <IoMdMan /> {app.adult_price}
-                        </Flex>
-                      </Text>
-                      <Text
-                        color={childPriceColor}
-                        fontWeight="bold"
-                        fontSize="md"
-                      >
-                        <Flex>
-                          <FaChildReaching />
-                          {app.child_price}
-                        </Flex>
-                      </Text>
-                      <Text
-                        color={infantPriceColor}
-                        fontWeight="bold"
-                        fontSize="md"
-                      >
-                        <Flex>
-                          <PiBabyBold />
-                          {app.infant_price}
-                        </Flex>
-                      </Text>
-                    </Td>
-                  </Tr>
-                ))
-              )}
+              ))}
             </Tbody>
           </Table>
         </Box>
@@ -349,4 +285,4 @@ const TourGuideApplications: React.FC = () => {
   );
 };
 
-export default TourGuideApplications;
+export default TourApplications;

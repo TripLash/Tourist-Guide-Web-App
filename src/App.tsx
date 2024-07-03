@@ -1,5 +1,5 @@
-import { useContext } from "react";
-import { Outlet } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import NavBar from "./components/Nav Bar/NavBar";
 
 import { AuthContext } from "./components/Authentication/AuthContext";
@@ -7,31 +7,38 @@ import AdminNavBar from "./components/Admin Dashboard/adminNavBar";
 
 function App() {
   const authContext = useContext(AuthContext);
+  const location = useLocation();
+  const [ShowNavBar, setShowNavBar] = useState(true);
+
+  const noNavBarRoutes = [
+    "/Login",
+    "/SignIn",
+    "/ForgetPassword",
+    "/OTPVerification",
+    "/changePassword",
+  ];
+
+  useEffect(() => {
+    if (!authContext) {
+      return;
+    }
+    const { isAdmin } = authContext;
+
+    setShowNavBar(!noNavBarRoutes.includes(location.pathname) && !isAdmin);
+  }, [location, authContext]);
 
   if (!authContext) {
     return null;
   }
 
   const { isAdmin } = authContext;
+
   return (
     <>
-      {!isAdmin ? <NavBar /> : <AdminNavBar />}
-
+      {ShowNavBar ? <NavBar /> : isAdmin ? <AdminNavBar /> : null}
       <Outlet />
     </>
   );
 }
-
-// const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
-//   const authContext = useContext(AuthContext);
-
-//   if (!authContext) {
-//     return null;
-//   }
-
-//   const { token } = authContext;
-
-//   return token ? children : <Navigate to="/Login" />;
-// };
 
 export default App;
