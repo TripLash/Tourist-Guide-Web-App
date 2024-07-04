@@ -24,7 +24,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Server_Url } from "../Main/root";
-import { FaEllipsisV, FaPlus } from "react-icons/fa";
 import { User } from "./Types/User";
 import axios from "axios";
 import { AuthContext } from "../Authentication/AuthContext";
@@ -35,21 +34,9 @@ import { BsArrowRightCircleFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { BsSearch } from "react-icons/bs";
 import { _mainColor, _mainTxtColor, _secTxtColor } from "../Main/Colors";
-import { Tour } from "../Tours/Types/Tour";
+import { tourApplication } from "./Types/TourApplication";
 
-interface tourApplication {
-  creation_date: string;
-  _id: string;
-  tour: Tour[];
-  user: User[];
-  members: number;
-  total_price: number;
-  start_date: string;
-  end_date: string;
-  start_time: number;
-  status: string;
-}
-type StatusType = "pending" | "active" | "upcomming" | "previous";
+type StatusType = "pending" | "active" | "upcomming" | "upcoming" | "previous";
 const TourApplications: React.FC = () => {
   const [applications, setApplications] = useState<tourApplication[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -74,6 +61,7 @@ const TourApplications: React.FC = () => {
     pending: "yellow",
     active: "green",
     upcomming: "blue",
+    upcoming: "blue",
     previous: "gray",
   };
 
@@ -229,8 +217,8 @@ const TourApplications: React.FC = () => {
                   _hover={{ bg: "gray.100", cursor: "pointer" }}
                 >
                   <Td>{indexOfFirstUser + index + 1}</Td>
-                  <Td>{`${app.tour} `}</Td>
-                  <Td>{`${app.user}`}</Td>
+                  <Td>{`${app.tour?.title}`}</Td>
+                  <Td>{`${app.user?.firstname} ${app.user?.lastname}`}</Td>
                   <Td>{app.members}</Td>
                   <Td>
                     <Badge

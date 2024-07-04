@@ -22,14 +22,14 @@ import {
 import axios from "axios";
 import { Server_Url } from "../Main/root";
 import { AuthContext } from "../Authentication/AuthContext";
-import { Application } from "./Types/TourApplication";
+import { guideApplication } from "./Types/GuideApplication";
 import { Tour } from "../Tours/Types/Tour";
 import { User } from "./Types/User";
 import { Guide } from "./Types/Guide";
 
 const GuideAppDetails: React.FC = () => {
   const { appId } = useParams<{ appId: string }>();
-  const [application, setApplication] = useState<Application | null>(null);
+  const [application, setApplication] = useState<guideApplication | null>(null);
   const [tour, setTour] = useState<Tour | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [guide, setGuide] = useState<Guide | null>(null);
@@ -160,11 +160,11 @@ const GuideAppDetails: React.FC = () => {
             </Stat>
             <Stat>
               <StatLabel>Members</StatLabel>
-              <StatNumber>{application.members}</StatNumber>
+              {/* <StatNumber>{application.members}</StatNumber> */}
             </Stat>
             <Stat>
               <StatLabel>Total Price</StatLabel>
-              <StatNumber>${application.total_price}</StatNumber>
+              <StatNumber>${application.adult_price}</StatNumber>
             </Stat>
             <Stat>
               <StatLabel>Status</StatLabel>

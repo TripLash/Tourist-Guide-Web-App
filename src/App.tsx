@@ -35,7 +35,7 @@ function App() {
 
   return (
     <>
-      {ShowNavBar ? <NavBar /> : isAdmin ? <AdminNavBar /> : null}
+      {ShowNavBar ? <NavBar /> : null}
       <Outlet />
     </>
   );

@@ -42,22 +42,7 @@ import { Guide } from "./Types/Guide";
 import { FaChildReaching } from "react-icons/fa6";
 import { IoMdMan } from "react-icons/io";
 import { PiBabyBold } from "react-icons/pi";
-
-interface guideApplication {
-  creation_date: string;
-  _id: string;
-  tour: Tour[];
-  user: User[];
-  tour_guide: Guide[];
-  participants: number;
-  adult_price: number;
-  child_price: number;
-  infant_price: number;
-  start_date: string;
-  end_date: string;
-  start_time: number;
-  status: string;
-}
+import { guideApplication } from "./Types/GuideApplication";
 
 type StatusType = "pending" | "active" | "upcomming" | "upcoming" | "previous";
 
@@ -263,8 +248,8 @@ const TourGuideApplications: React.FC = () => {
                     _hover={{ bg: "gray.100", cursor: "pointer" }}
                   >
                     <Td>{indexOfFirstUser + index + 1}</Td>
-                    <Td>{`${app.tour}`}</Td>
-                    <Td>{`${app.user}`}</Td>
+                    <Td>{`${app.tour?.title}`}</Td>
+                    <Td>{`${app.user?.firstname} ${app.user?.lastname}`}</Td>
                     <Td>{`${app.tour_guide}`}</Td>
                     <Td>{app.participants}</Td>
                     <Td>

@@ -26,6 +26,7 @@ import TourAppDetails from "../components/Admin Dashboard/TourAppDetails";
 import TourGuideAppDetails from "../components/Admin Dashboard/GuideAppDetails";
 import GuideAppDetails from "../components/Admin Dashboard/GuideAppDetails";
 import Dashboard from "../components/Admin Dashboard/Dashboard";
+import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
       { path: "/ForgetPassword", element: <ForgetPassword /> },
       { path: "/OTPVerification", element: <OTPVerification /> },
       { path: "/changePassword", element: <ChangePassword /> },
+      {
+        path: "/TourGuideInfo",
+        element: <TourGuideInfo />,
+      },
       {
         path: "/FavouriteLists",
         element: (

@@ -16,6 +16,7 @@ import {
   Flex,
   Badge,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { User } from "./Types/User";
 import axios from "axios";
@@ -80,7 +81,11 @@ const Profile: React.FC = () => {
   };
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return (
+      <Box textAlign="center" mt={5}>
+        <Spinner size="xl" />
+      </Box>
+    );
   }
 
   if (!profile) {

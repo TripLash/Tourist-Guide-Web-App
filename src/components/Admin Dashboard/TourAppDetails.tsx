@@ -22,15 +22,13 @@ import {
 import axios from "axios";
 import { Server_Url } from "../Main/root";
 import { AuthContext } from "../Authentication/AuthContext";
-import { Application } from "./Types/TourApplication";
+import { tourApplication } from "./Types/TourApplication";
 import { Tour } from "../Tours/Types/Tour";
 import { User } from "./Types/User";
 
 const TourAppDetails: React.FC = () => {
   const { appId } = useParams<{ appId: string }>();
-  const [application, setApplication] = useState<Application | null>(null);
-  const [tour, setTour] = useState<Tour | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [application, setApplication] = useState<tourApplication | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const authContext = useContext(AuthContext);
@@ -39,7 +37,7 @@ const TourAppDetails: React.FC = () => {
     const TourAppData = async () => {
       if (!authContext || !authContext.token || !appId) {
         console.error("Authorization token is missing");
-        setError("Authorization token is missing");
+
         setLoading(false);
         return;
       }
@@ -52,16 +50,6 @@ const TourAppDetails: React.FC = () => {
           }
         );
         setApplication(appResponse.data.app);
-
-        const userResponse = await axios.get(
-          `${Server_Url}/api/get-user/${appResponse.data.app.user}`
-        );
-        setUser(userResponse.data.user);
-
-        const tourResponse = await axios.get(
-          `${Server_Url}/api/get-tour/${appResponse.data.app.tour}`
-        );
-        setTour(tourResponse.data.data);
       } catch (error: any) {
         console.error("Error fetching data:", error);
         setError(error.response?.data?.message || error.message);
@@ -103,17 +91,17 @@ const TourAppDetails: React.FC = () => {
           mb={{ base: 4, md: 0 }}
           mr={{ md: 4 }}
         >
-          {tour ? (
+          {application.tour ? (
             <>
               <Image
-                src={tour.photos?.[0]}
-                alt={tour.title}
+                src={application.tour.photos?.[0]}
+                alt={application.tour.title}
                 objectFit="cover"
                 width="100%"
                 height="200px"
               />
               <Box p={4}>
-                <Heading size="md">{tour.title}</Heading>
+                <Heading size="md">{application.tour.title}</Heading>
               </Box>
             </>
           ) : (
@@ -129,12 +117,12 @@ const TourAppDetails: React.FC = () => {
           <StatGroup>
             <Stat>
               <StatLabel>User</StatLabel>
-              {user ? (
+              {application.user ? (
                 <>
                   <StatNumber>
-                    {user.firstname} {user.lastname}
+                    {application.user.firstname} {application.user.lastname}
                   </StatNumber>
-                  <StatHelpText>{user.email}</StatHelpText>
+                  <StatHelpText>{application.user.email}</StatHelpText>
                 </>
               ) : (
                 <StatNumber>User not found</StatNumber>

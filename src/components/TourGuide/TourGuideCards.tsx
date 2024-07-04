@@ -21,29 +21,16 @@ import ReactCountryFlag from "react-country-flag";
 import React from "react";
 import { Server_Url } from "../Main/root";
 import TourGuideFilters from "../Filter/tourGuideFilter";
-interface Language {
-  _id: string;
-  name: string;
-  experience: string;
-  countryCode: string;
-}
-interface TourGuide {
-  _id: string;
-  firstname: string;
-  lastname: string;
-  photo: string;
-  identity_photo: string;
-  languages: Language[];
-  rate: number;
-  hourPrice: number;
-  guideIn: string[];
-}
+import { useLocation, useNavigate } from "react-router-dom";
+import TourGuideInfo from "./TourGuideInfo";
+import { TourGuide } from "./types/TourGuide";
 const fallbackImageUrl =
   "https://static9.depositphotos.com/1000291/1170/i/450/depositphotos_11709956-stock-photo-tourist-travellers-with-map-in.jpg";
 
 const TourGuideCards = () => {
   const [tourGuides, setTourGuides] = useState<TourGuide[]>([]);
-
+  const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     const fetchTourGuides = async () => {
       try {
@@ -66,10 +53,17 @@ const TourGuideCards = () => {
               location: tourGuide.location || "Unknown",
               price: tourGuide.dayPrice || 0,
               rate: tourGuide.rate || 0,
-              hourPrice: tourGuide.hourPrice || 0,
+              hourPrice: tourGuide.hourPrice || 100,
               guideIn: tourGuide.guideIn || [],
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               languages: tourGuide.languages || [],
+              included: tourGuide.included || [
+                "Guiding service",
+                "private transportation",
+                "Entrance fees",
+              ],
+              dayPrice: tourGuide.dayPrice || 400,
+              aboutYou: tourGuide.aboutYou || "tour guide",
             })
           );
           setTourGuides(tourGuideDataFormatted);
@@ -107,6 +101,9 @@ const TourGuideCards = () => {
             borderRadius="md"
             transition="transform 0.2s"
             _hover={{ transform: "scale(1.05)" }}
+            onClick={() => {
+              navigate("/TourGuideInfo", { state: { tourGuide } });
+            }}
           >
             <Box width={{ base: "100%", sm: "150px" }} overflow="hidden">
               <Image
@@ -138,11 +135,6 @@ const TourGuideCards = () => {
                 <Flex flexWrap="wrap">
                   {tourGuide.languages.map((lang) => (
                     <Tag key={lang._id} mr={2} mb={2}>
-                      <ReactCountryFlag
-                        countryCode={lang.countryCode}
-                        svg
-                        style={{ marginRight: "5px" }}
-                      />
                       {lang.name} - {lang.experience}
                     </Tag>
                   ))}
