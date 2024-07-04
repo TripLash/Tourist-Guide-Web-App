@@ -26,6 +26,7 @@ import TourAppDetails from "../components/Admin Dashboard/TourAppDetails";
 import TourApplications from "../components/Admin Dashboard/TourApplications";
 import UserDetails from "../components/Admin Dashboard/userDetails";
 import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
+import Dashboard from "../components/Admin Dashboard/Dashboard";
 
 const router = createBrowserRouter([
   {
@@ -36,10 +37,6 @@ const router = createBrowserRouter([
       </AuthProvider>
     ),
     children: [
-      {
-        path: "/TourGuideInfo",
-        element: <TourGuideInfo />,
-      },
       {
         path: "/",
         element: <Home />,
@@ -63,7 +60,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/AdminDashboard",
+        path: "/",
         element: (
           <AuthProvider>
             <AdminProtectedRoute>
@@ -72,6 +69,7 @@ const router = createBrowserRouter([
           </AuthProvider>
         ),
         children: [
+          { path: "dashboard", element: <Dashboard /> },
           { path: "users", element: <UserList /> },
           { path: "user/:userId", element: <UserDetails /> },
           { path: "tour-guides", element: <TourGuideList /> },
