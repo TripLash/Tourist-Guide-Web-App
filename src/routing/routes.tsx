@@ -16,6 +16,16 @@ import TourGuideApplications from "../components/Admin Dashboard/TourGuideApplic
 import UserList from "../components/Admin Dashboard/UserList";
 import TourGuideList from "../components/Admin Dashboard/TourGuideList";
 import FavouriteList from "../components/Admin Dashboard/FavouriteList";
+import { Tour } from "@mui/icons-material";
+import AdminsList from "../components/Admin Dashboard/AdminsList";
+import FavList from "../components/Admin Dashboard/FavList";
+import AllFavouriteLists from "../components/Admin Dashboard/FavouriteList";
+import GuideAppDetails from "../components/Admin Dashboard/GuideAppDetails";
+import Profile from "../components/Admin Dashboard/profile";
+import TourAppDetails from "../components/Admin Dashboard/TourAppDetails";
+import TourApplications from "../components/Admin Dashboard/TourApplications";
+import UserDetails from "../components/Admin Dashboard/userDetails";
+import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
 
 const router = createBrowserRouter([
   {
