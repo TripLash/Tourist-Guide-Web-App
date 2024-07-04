@@ -16,17 +16,6 @@ import TourGuideApplications from "../components/Admin Dashboard/TourGuideApplic
 import UserList from "../components/Admin Dashboard/UserList";
 import TourGuideList from "../components/Admin Dashboard/TourGuideList";
 import FavouriteList from "../components/Admin Dashboard/FavouriteList";
-import AdminsList from "../components/Admin Dashboard/AdminsList";
-import UserDetails from "../components/Admin Dashboard/userDetails";
-import FavList from "../components/Admin Dashboard/FavList";
-import AllFavouriteLists from "../components/Admin Dashboard/FavouriteList";
-import Profile from "../components/Admin Dashboard/profile";
-import TourApplications from "../components/Admin Dashboard/TourApplications";
-import TourAppDetails from "../components/Admin Dashboard/TourAppDetails";
-import TourGuideAppDetails from "../components/Admin Dashboard/GuideAppDetails";
-import GuideAppDetails from "../components/Admin Dashboard/GuideAppDetails";
-import Dashboard from "../components/Admin Dashboard/Dashboard";
-import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
 
 const router = createBrowserRouter([
   {
@@ -38,9 +27,14 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        path: "/TourGuideInfo",
+        element: <TourGuideInfo />,
+      },
+      {
         path: "/",
         element: <Home />,
       },
+      { path: "/Tour", element: <Tour /> },
       { path: "/Login", element: <Login /> },
       { path: "/SignIn", element: <SignIn /> },
       { path: "/ForgetPassword", element: <ForgetPassword /> },
@@ -59,14 +53,15 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/",
+        path: "/AdminDashboard",
         element: (
-          <AdminProtectedRoute>
-            <AdminDashboard />
-          </AdminProtectedRoute>
+          <AuthProvider>
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>
+          </AuthProvider>
         ),
         children: [
-          { path: "dashboard", element: <Dashboard /> },
           { path: "users", element: <UserList /> },
           { path: "user/:userId", element: <UserDetails /> },
           { path: "tour-guides", element: <TourGuideList /> },
