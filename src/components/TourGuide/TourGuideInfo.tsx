@@ -16,12 +16,12 @@ import {
   Circle,
 } from "@chakra-ui/react";
 import apiClient from "../../services/api-client";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon, StarIcon } from "@chakra-ui/icons";
 import NavBar from "../Nav Bar/NavBar";
 
-const LanguageItem = ({ language, experience }) => {
-  const getProficiency = (level) => {
+const LanguageItem = ({ language, experience }: { language: string, experience: string }) => {
+  const getProficiency = (level: string) => {
     switch (level.toLowerCase()) {
       case "fluent":
         return 80;
@@ -55,6 +55,7 @@ const LanguageItem = ({ language, experience }) => {
 };
 
 const TourGuideInfo = () => {
+  const navigate = useNavigate();
   const [tourCounter, setTourCounter] = useState(0);
   useEffect(() => {
     apiClient.get("guide-tours/66793d1108894865072a250f").then((response) => {
@@ -169,7 +170,7 @@ const TourGuideInfo = () => {
                 Guide In
               </Text>
               <Text> {tourGuide.guideIn[0]} </Text>
-              <Text>  {tourGuide.guideIn[1]} </Text>
+              <Text> {tourGuide.guideIn[1]} </Text>
             </Box>
             <Box marginBottom={"1rem"}>
               <Text fontWeight="bold" fontSize="lg">
@@ -177,7 +178,12 @@ const TourGuideInfo = () => {
               </Text>
               <Text> {tourGuide.aboutYou} </Text>
             </Box>
-            <Stack direction="row" spacing={8} alignSelf="center">
+            <Stack
+              direction="row"
+              spacing={8}
+              alignSelf="center"
+              onClick={() => navigate("/Booking")}
+            >
               <Button
                 colorScheme="blue"
                 variant="solid"

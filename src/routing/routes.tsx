@@ -18,6 +18,8 @@ import TourGuideList from "../components/Admin Dashboard/TourGuideList";
 import FavouriteList from "../components/Admin Dashboard/FavouriteList";
 import Tour from "../components/Tours/Tour";
 import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
+import Booking from "../components/Tours/Booking";
+import Payment from "../components/Tours/Payment";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,8 @@ const router = createBrowserRouter([
         ),
       },
       { path: "/Tour", element: <Tour /> },
+      { path: "/Booking", element: <Booking /> },
+      { path: "/Payment", element: <Payment /> },
       { path: "/Login", element: <Login /> },
       { path: "/SignIn", element: <SignIn /> },
       { path: "/ForgetPassword", element: <ForgetPassword /> },

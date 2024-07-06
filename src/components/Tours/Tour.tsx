@@ -13,7 +13,7 @@ import {
   Collapse,
 } from "@chakra-ui/react";
 import apiClient from "../../services/api-client";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useNavigation } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon, StarIcon } from "@chakra-ui/icons";
 import tourContainer from "./tourContainer";
 import NavBar from "../Nav Bar/NavBar";
@@ -85,7 +85,7 @@ const Tour = () => {
     "Bike Tour",
     "Cruises",
   ];
-
+  const navigate = useNavigate();
   const location = useLocation();
   const { tour } = location.state || {};
 
@@ -309,7 +309,7 @@ const Tour = () => {
               </Text>
               <Text>Personal Expenses, Souvenirs, Food, Drinks, Snacks</Text>
             </Box>
-            <Box borderBottom={"1px"} paddingBottom="1rem">
+            <Box  marginBottom="0.7rem">
               <HStack justifyContent="space-between" marginBottom="1rem">
                 <HStack>
                   <Text fontWeight="bold" fontSize="lg">
@@ -382,6 +382,24 @@ const Tour = () => {
             </Box>
           </Stack>
         </Box>
+        <Stack direction="row" spacing={8} justify="center" onClick={() => navigate("/Booking")}>
+          <Button
+            colorScheme="blue"
+            variant="solid"
+            borderRadius="200px"
+            width="10rem"
+          >
+            Request
+          </Button>
+          <Button
+            colorScheme="blue"
+            variant="outline"
+            borderRadius="200px"
+            width="10rem"
+          >
+            Message
+          </Button>
+        </Stack>
       </Box>
     </Flex>
   );
