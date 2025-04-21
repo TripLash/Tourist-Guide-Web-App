@@ -5,10 +5,9 @@ import { AuthContext } from "../Authentication/AuthContext";
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const authContext = useContext(AuthContext);
 
-  if (!authContext) {
-    return null;
+  if (!authContext || !authContext.token) {
+    return <Navigate to="/Login" />;
   }
-
   const { token } = authContext;
 
   return token ? children : <Navigate to="/Login" />;

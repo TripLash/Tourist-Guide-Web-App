@@ -23,31 +23,14 @@ import { Server_Url } from "../Main/root";
 import TourGuideFilters from "../Filter/tourGuideFilter";
 import { useLocation, useNavigate } from "react-router-dom";
 import TourGuideInfo from "./TourGuideInfo";
-interface Language {
-  _id: string;
-  name: string;
-  experience: string;
-  countryCode: string;
-}
-interface TourGuide {
-  _id: string;
-  firstname: string;
-  lastname: string;
-  identity_photo: string;
-  languages: Language[];
-  rate: number;
-  hourPrice: number;
-  guideIn: string[];
-}
+import { TourGuide } from "./types/TourGuide";
 const fallbackImageUrl =
   "https://static9.depositphotos.com/1000291/1170/i/450/depositphotos_11709956-stock-photo-tourist-travellers-with-map-in.jpg";
 
 const TourGuideCards = () => {
+  const [tourGuides, setTourGuides] = useState<TourGuide[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [tourGuides, setTourGuides] = useState<TourGuide[]>([]);
-
   useEffect(() => {
     const fetchTourGuides = async () => {
       try {
@@ -63,23 +46,24 @@ const TourGuideCards = () => {
                 ? tourGuide.user.firstname || "Unknown"
                 : "Unknown",
               lastname: tourGuide.user ? tourGuide.user.lastname || "" : "",
-              identity_photo: tourGuide.identity_photo || "",
+              identity_photo: tourGuide.user
+                ? tourGuide.user.identity_photo || ""
+                : "",
+              photo: tourGuide.user ? tourGuide.user.photo || "" : "",
               location: tourGuide.location || "Unknown",
               price: tourGuide.dayPrice || 0,
               rate: tourGuide.rate || 0,
+              hourPrice: tourGuide.hourPrice || 100,
               guideIn: tourGuide.guideIn || [],
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               languages: tourGuide.languages || [],
-              photo: tourGuide.user ? tourGuide.user.photo || "" : "",
               included: tourGuide.included || [
                 "Guiding service",
                 "private transportation",
                 "Entrance fees",
               ],
               dayPrice: tourGuide.dayPrice || 400,
-              hourPrice: tourGuide.hourPrice || 100,
-              aboutYou: tourGuide.aboutYou ||"tour guide",
-
+              aboutYou: tourGuide.aboutYou || "tour guide",
             })
           );
           setTourGuides(tourGuideDataFormatted);
@@ -118,10 +102,6 @@ const TourGuideCards = () => {
             transition="transform 0.2s"
             _hover={{ transform: "scale(1.05)" }}
             onClick={() => {
-              // setTourData(tour);
-              // console.log(tour);
-              // <Tour tourData={tour}/>;
-              // console.log(tourGuide);
               navigate("/TourGuideInfo", { state: { tourGuide } });
             }}
           >
@@ -130,7 +110,7 @@ const TourGuideCards = () => {
                 objectFit="cover"
                 width="100%"
                 height="100%"
-                src={tourGuide.identity_photo}
+                src={tourGuide.photo}
                 alt={`${tourGuide.firstname} ${tourGuide.lastname}`}
                 fallbackSrc={fallbackImageUrl}
               />
@@ -155,11 +135,6 @@ const TourGuideCards = () => {
                 <Flex flexWrap="wrap">
                   {tourGuide.languages.map((lang) => (
                     <Tag key={lang._id} mr={2} mb={2}>
-                      <ReactCountryFlag
-                        countryCode={lang.countryCode}
-                        svg
-                        style={{ marginRight: "5px" }}
-                      />
                       {lang.name} - {lang.experience}
                     </Tag>
                   ))}

@@ -18,88 +18,75 @@ import {
   MenuItem,
   MenuList,
   Text,
-  Tag,
-  Icon,
 } from "@chakra-ui/react";
 import { Server_Url } from "../Main/root";
 import { FaEllipsisV } from "react-icons/fa";
+import { User } from "./Types/User";
 import axios from "axios";
 import { AuthContext } from "../Authentication/AuthContext";
-import { ChevronDownIcon, StarIcon } from "@chakra-ui/icons";
-import { Guide, Language, User } from "./Types/Guide";
-import ReactCountryFlag from "react-country-flag";
 
-const TourGuideList = () => {
-  const [guides, setGuides] = useState<Guide[]>([]);
+const AllAdmins = () => {
+  const [uadmins, setAdmins] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [guidesPerPage] = useState<number>(7);
-  // const [filterTypes, setFilterTypes] = useState<string>("All");
+  const [adminsPerPage] = useState<number>(7);
+  const [filterTypes, setFilterTypes] = useState<string>("All");
   const authContext = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchGuides = async () => {
+    const fetchAdmins = async () => {
       if (!authContext || !authContext.token) {
         console.error("Auth context or token is not available");
         setLoading(false);
         return;
       }
       try {
-        const response = await axios.get(`${Server_Url}/api/get-all-guides`, {
+        const response = await axios.get(`${Server_Url}/api/get-all-users`, {
           headers: { Authorization: `Bearer ${authContext.token}` },
         });
-        const guideData = response.data.data;
-        if (Array.isArray(guideData)) {
-          const tourGuideDataFormatted = guideData.map(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (guide: any) => ({
-              firstname: guide.user
-                ? guide.user.firstname || "Unknown"
-                : "Unknown",
-              lastname: guide.user ? guide.user.lastname || "" : "",
-            })
-          );
-          console.log(response.data.data);
-        } else {
-          ("");
-        }
         console.log(response.data.status);
-
-        setGuides(response.data.data);
+        setAdmins(response.data.data.users);
       } catch (error) {
-        console.error("Error fetching guides:", error);
+        console.error("Error fetching users:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchGuides();
+    fetchAdmins();
   }, [authContext]);
 
-  const indexOfLastGuide = currentPage * guidesPerPage;
-  const indexOfFirstGuide = indexOfLastGuide - guidesPerPage;
+  const indexOfLastUser = currentPage * adminsPerPage;
+  const indexOfFirstUser = indexOfLastUser - adminsPerPage;
 
-  const currentGuides = guides.slice(indexOfFirstGuide, indexOfLastGuide);
+  const filteredUsers =
+    filterTypes === "All"
+      ? uadmins
+      : uadmins.filter((admin) => admin.user_types.includes(filterTypes));
+
+  const currentAdmins = filteredUsers
+    .filter((admin) => admin.user_types.includes("admin"))
+    .slice(indexOfFirstUser, indexOfLastUser);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const deleteGuide = async (guideId: string) => {
+  const deleteAdmin = async (adminId: string) => {
     if (!authContext || !authContext.token) {
       console.error("Auth context or token is not available");
       return;
     }
     try {
-      await axios.delete(`${Server_Url}/api/delete-guide/${guideId}`, {
+      await axios.delete(`${Server_Url}/api/delete-user/${adminId}`, {
         headers: { Authorization: `Bearer ${authContext.token}` },
       });
-      setGuides(guides.filter((guide) => guide._id !== guideId));
-      console.log(`Guide with ${guideId}  deleted successfully`);
+      setAdmins(uadmins.filter((admin) => admin._id !== adminId));
+      console.log(`Admin with ${adminId}  deleted successfully`);
     } catch (error) {
-      console.error("Error deleting guide:", error);
+      console.error("Error deleting user:", error);
     }
   };
 
-  const showGuide = (userId: string) => {};
+  const showAdmin = (adminId: string) => {};
 
   if (loading) {
     return (
@@ -117,34 +104,27 @@ const TourGuideList = () => {
             <Tr>
               <Th position="sticky" top={0} zIndex={2} bg={"white"}></Th>
               <Th position="sticky" top={0} zIndex={2} bg={"white"}>
-                # Guides
+                # Users
               </Th>
+
               <Th position="sticky" top={0} zIndex={2} bg={"white"}>
                 Name
               </Th>
               <Th position="sticky" top={0} zIndex={2} bg={"white"}>
+                Email
+              </Th>
+              <Th position="sticky" top={0} zIndex={2} bg={"white"}>
+                Mobile
+              </Th>
+              <Th position="sticky" top={0} zIndex={2} bg={"white"}>
                 Language
-              </Th>
-              <Th position="sticky" top={0} zIndex={2} bg={"white"}>
-                Address
-              </Th>
-
-              <Th position="sticky" top={0} zIndex={2} bg={"white"}>
-                Guide In
-              </Th>
-
-              <Th position="sticky" top={0} zIndex={2} bg={"white"}>
-                Price
-              </Th>
-              <Th position="sticky" top={0} zIndex={2} bg={"white"}>
-                Rate
               </Th>
             </Tr>
           </Thead>
           <Tbody>
-            {currentGuides.map((guide, index) => (
+            {currentAdmins.map((admin, index) => (
               <Tr
-                key={guide._id}
+                key={admin._id}
                 sx={{
                   "& > td": { paddingY: "15px" },
                   // border: "1px solid #E2E8F0",
@@ -160,45 +140,22 @@ const TourGuideList = () => {
                       variant="outline"
                     />
                     <MenuList minWidth="120px">
-                      <MenuItem onClick={() => showGuide(guide._id)}>
+                      <MenuItem onClick={() => showAdmin(admin._id)}>
                         Show
                       </MenuItem>
-                      <MenuItem onClick={() => deleteGuide(guide._id)}>
+                      <MenuItem onClick={() => deleteAdmin(admin._id)}>
                         Delete
                       </MenuItem>
                     </MenuList>
                   </Menu>
                 </Td>
-                <Td>{indexOfFirstGuide + index + 1}</Td>
+                <Td>{indexOfFirstUser + index + 1}</Td>
 
-                <Td>
-                  {guide.user
-                    ? `${guide.user.firstname} ${guide.user.lastname}`
-                    : "Unknown"}
-                </Td>
-
-                <Td>
-                  <Flex flexWrap="wrap">
-                    {guide.languages.map((lang) => (
-                      <Text key={lang._id} mr={2} mb={2}>
-                        {lang.name}
-                      </Text>
-                    ))}
-                  </Flex>
-                </Td>
-                <Td>
-                  {guide.city}, {guide.country}
-                </Td>
-                <Td>{guide.guideIn.join(", ")}</Td>
-                <Td>
-                  {guide.hourPrice}/hr {guide.dayPrice}/day
-                </Td>
-                <Td>
-                  <Flex alignItems="center">
-                    <Text ml={1}>{guide.rate} </Text>
-                    <Icon as={StarIcon} color="yellow.400" />
-                  </Flex>
-                </Td>
+                {/* <Td>{user._id}</Td> */}
+                <Td>{`${admin.firstname} ${admin.lastname}`}</Td>
+                <Td>{admin.email}</Td>
+                <Td>{admin.mobile}</Td>
+                <Td>{admin.language}</Td>
               </Tr>
             ))}
           </Tbody>
@@ -218,7 +175,7 @@ const TourGuideList = () => {
           variant="filled"
         >
           {Array.from(
-            { length: Math.ceil(guides.length / guidesPerPage) },
+            { length: Math.ceil(uadmins.length / adminsPerPage) },
             (_, i) => (
               <option key={i + 1} value={i + 1}>
                 {i + 1}
@@ -228,7 +185,9 @@ const TourGuideList = () => {
         </Select>
         <Button
           onClick={() => paginate(currentPage + 1)}
-          isDisabled={currentPage === Math.ceil(guides.length / guidesPerPage)}
+          isDisabled={
+            currentPage === Math.ceil(filteredUsers.length / adminsPerPage)
+          }
         >
           Next
         </Button>
@@ -237,4 +196,4 @@ const TourGuideList = () => {
   );
 };
 
-export default TourGuideList;
+export default AllAdmins;

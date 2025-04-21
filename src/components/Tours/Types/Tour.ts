@@ -1,9 +1,9 @@
-interface Tour {
+export interface Tour {
   _id: string;
   title: string;
-  image: string;
+  photos: string[];
   location: string;
-  price: number;
+  adult_price: number;
   ratingsAverage: number;
   faviorate: boolean;
   tourCategory: string;

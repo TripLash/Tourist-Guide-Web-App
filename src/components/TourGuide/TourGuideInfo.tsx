@@ -12,15 +12,20 @@ import {
   IconButton,
   Collapse,
   Progress,
-  list,
   Circle,
 } from "@chakra-ui/react";
 import apiClient from "../../services/api-client";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon, StarIcon } from "@chakra-ui/icons";
 import NavBar from "../Nav Bar/NavBar";
+import { Language, TourGuide } from "./types/TourGuide";
 
-const LanguageItem = ({ language, experience }: { language: string, experience: string }) => {
+
+interface LocationState {
+  tourGuide: TourGuide;
+}
+
+const LanguageItem: React.FC<Language> = ({ language, experience }) => {
   const getProficiency = (level: string) => {
     switch (level.toLowerCase()) {
       case "fluent":
@@ -54,18 +59,20 @@ const LanguageItem = ({ language, experience }: { language: string, experience: 
   );
 };
 
-const TourGuideInfo = () => {
-  const navigate = useNavigate();
+
+const TourGuideInfo: React.FC = () => {
   const [tourCounter, setTourCounter] = useState(0);
+  const [selectedTourType, setSelectedTourType] = useState<string | null>(null);
+  const location = useLocation();
+  const { tourGuide } = location.state as LocationState;
+  const [selectedTour, setSelectedTour] = useState<{} | null>(null);
+
   useEffect(() => {
     apiClient.get("guide-tours/66793d1108894865072a250f").then((response) => {
       const count = response.data.toursquantity;
       setTourCounter(count);
-      console.log(tourCounter);
     });
   }, []);
-
-  const [selectedTourType, setSelectedTourType] = useState<string | null>(null);
 
   const handleBadgeClick = (type: string) => {
     setSelectedTourType(type);
@@ -75,16 +82,10 @@ const TourGuideInfo = () => {
   const selectedTextColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
-  const location = useLocation();
-  const { tourGuide } = location.state || {};
-  const [selectedTour, setSelectedTour] = useState<{} | null>(null);
-
   if (!tourGuide) {
     setSelectedTour(tourGuide);
     return <div>No tour data available</div>;
   }
-
-  console.log(tourGuide);
 
   return (
     <Flex
@@ -111,14 +112,14 @@ const TourGuideInfo = () => {
                     borderRadius="full"
                     boxSize="6rem"
                     src={tourGuide.photo}
-                    alt="Dan Abramov"
+                    alt="Tour Guide"
                   />
                 ) : (
                   <Image
                     borderRadius="full"
                     boxSize="5rem"
                     src="https://bit.ly/dan-abramov"
-                    alt="Dan Abramov"
+                    alt="Tour Guide"
                   />
                 )}
                 <Text fontSize="3xl" color="black" fontWeight="medium">
@@ -137,6 +138,8 @@ const TourGuideInfo = () => {
                     key={index}
                     language={lang.name}
                     experience={lang.experience}
+                    _id={""}
+                    name={""}
                   />
                 ))}
               </Stack>
@@ -154,8 +157,8 @@ const TourGuideInfo = () => {
               <Text fontWeight="bold" fontSize="lg">
                 What's Included
               </Text>
-              {tourGuide.included.map((list) => (
-                <Text>{list}</Text>
+              {tourGuide.included.map((item, index) => (
+                <Text key={index}>{item}</Text>
               ))}
             </Box>
             <Box borderBottom={"1px"} paddingBottom="1rem">
@@ -169,8 +172,11 @@ const TourGuideInfo = () => {
               <Text fontWeight="bold" fontSize="lg">
                 Guide In
               </Text>
-              <Text> {tourGuide.guideIn[0]} </Text>
-              <Text> {tourGuide.guideIn[1]} </Text>
+
+              {tourGuide.guideIn.map((location, index) => (
+                <Text key={index}>{location}</Text>
+              ))}
+
             </Box>
             <Box marginBottom={"1rem"}>
               <Text fontWeight="bold" fontSize="lg">

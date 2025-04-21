@@ -31,7 +31,7 @@ import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { RiFlag2Line } from "react-icons/ri"; // Import icon for country flag
+import { RiFlag2Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import FormContainer from "./formContainer";
 import { Link as RouterLink } from "react-router-dom";
@@ -91,8 +91,8 @@ const SignIn = () => {
           apiClient
             .post("signUp/", { ...data, language: "E" })
             .then((res) => {
-              const token = res.data.token; // Assuming the token is returned in res.data.token
-              localStorage.setItem("authToken", token); // Store the token securely
+              const token = res.data.token;
+              localStorage.setItem("authToken", token);
               console.log(res.data.status);
               navigate("/");
             })
@@ -164,10 +164,10 @@ const SignIn = () => {
               ></Input>
               <InputRightElement width="4.5rem" height="100%">
                 <IconButton
-                  icon={show ? <FiEyeOff /> : <FiEye />} // Use conditional rendering to display different icons based on state
-                  aria-label={show ? "Hide" : "Show"} // Set aria-label for accessibility
+                  icon={show ? <FiEye /> : <FiEyeOff />}
+                  aria-label={show ? "Hide" : "Show"}
                   onClick={handleClick}
-                  variant="ghost" // Use ghost variant for an icon-only button
+                  variant="ghost"
                 />
               </InputRightElement>
             </InputGroup>
@@ -175,6 +175,7 @@ const SignIn = () => {
           <Button
             height="48px"
             margin="0.5rem"
+            mt={-2}
             bgColor="#4F90AE"
             color="white"
             type="submit"

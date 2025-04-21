@@ -16,34 +16,32 @@ import TourGuideApplications from "../components/Admin Dashboard/TourGuideApplic
 import UserList from "../components/Admin Dashboard/UserList";
 import TourGuideList from "../components/Admin Dashboard/TourGuideList";
 import FavouriteList from "../components/Admin Dashboard/FavouriteList";
-import Tour from "../components/Tours/Tour";
+import { Tour } from "@mui/icons-material";
+import AdminsList from "../components/Admin Dashboard/AdminsList";
+import FavList from "../components/Admin Dashboard/FavList";
+import AllFavouriteLists from "../components/Admin Dashboard/FavouriteList";
+import GuideAppDetails from "../components/Admin Dashboard/GuideAppDetails";
+import Profile from "../components/Admin Dashboard/profile";
+import TourAppDetails from "../components/Admin Dashboard/TourAppDetails";
+import TourApplications from "../components/Admin Dashboard/TourApplications";
+import UserDetails from "../components/Admin Dashboard/userDetails";
 import TourGuideInfo from "../components/TourGuide/TourGuideInfo";
-import Booking from "../components/Tours/Booking";
-import Payment from "../components/Tours/Payment";
+
+import Dashboard from "../components/Admin Dashboard/Dashboard";
+
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <AuthProvider>
-        {" "}
         <App />
       </AuthProvider>
     ),
     children: [
       {
-        path: "/TourGuideInfo",
-        element: (
-         <TourGuideInfo />
-        ),
-      },
-      {
         path: "/",
-        element: (
-          <AuthProvider>
-            <Home />
-          </AuthProvider>
-        ),
+        element: <Home />,
       },
       { path: "/Tour", element: <Tour /> },
       { path: "/Booking", element: <Booking /> },
@@ -54,6 +52,10 @@ const router = createBrowserRouter([
       { path: "/OTPVerification", element: <OTPVerification /> },
       { path: "/changePassword", element: <ChangePassword /> },
       {
+        path: "/TourGuideInfo",
+        element: <TourGuideInfo />,
+      },
+      {
         path: "/FavouriteLists",
         element: (
           <PrivateRoute>
@@ -62,24 +64,33 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/AdminDashboard",
+        path: "/",
         element: (
-          <AdminDashboard />
-          // <AuthProvider>
-          //   <AdminProtectedRoute>
-          //     <AdminDashboard />
-          //   </AdminProtectedRoute>
-          // </AuthProvider>
+          <AuthProvider>
+            <AdminProtectedRoute>
+              <AdminDashboard />
+            </AdminProtectedRoute>
+          </AuthProvider>
         ),
         children: [
-          { path: "AdminDashboard", element: <AdminDashboard /> },
+          { path: "dashboard", element: <Dashboard /> },
           { path: "users", element: <UserList /> },
+          { path: "user/:userId", element: <UserDetails /> },
           { path: "tour-guides", element: <TourGuideList /> },
+          { path: "admins", element: <AdminsList /> },
+          { path: "profile", element: <Profile /> },
           {
             path: "tour-guide-applications",
             element: <TourGuideApplications />,
           },
-          { path: "favourites", element: <FavouriteList /> },
+          { path: "/guide-application/:appId", element: <GuideAppDetails /> },
+          {
+            path: "tour-applications",
+            element: <TourApplications />,
+          },
+          { path: "/application/:appId", element: <TourAppDetails /> },
+          { path: "favourites", element: <AllFavouriteLists /> },
+          { path: "list/:listId", element: <FavList /> },
         ],
       },
     ],

@@ -21,7 +21,7 @@ import {
   Text,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext, AuthContextType } from "./AuthContext";
 import NavBar from "../Authentication/NavBar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,7 +33,8 @@ import { FaApple } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
-import FormContainer from "./formContainer";
+
+import { _mainColor, _secTxtColor } from "../Main/Colors";
 
 const schema = z.object({
   username: z.string().email({ message: "Invalid email address" }),
@@ -43,7 +44,7 @@ const schema = z.object({
 type signUpData = z.infer<typeof schema>;
 
 const Login = () => {
-  const authContext = useContext(AuthContext);
+  const authContext = useContext<AuthContextType | undefined>(AuthContext);
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
@@ -52,7 +53,7 @@ const Login = () => {
     return null;
   }
 
-  const { login } = authContext;
+  const { login, isAdmin } = authContext;
 
   const inputBorder = {
     border: "1px solid",
@@ -87,7 +88,7 @@ const Login = () => {
       await login(data.username, data.password);
       const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-      navigate(isAdmin ? "/AdminDashboard" : "/");
+      navigate(isAdmin ? "/dashboard" : "/");
     } catch (err) {
       console.error("Login error:", err);
     }
@@ -141,7 +142,11 @@ const Login = () => {
                       />
                     </InputRightElement>
                   </InputGroup>
-                  <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+                  {errors.password && (
+                    <Text color="red.500" fontSize={16} align={"left"}>
+                      {errors.password.message}
+                    </Text>
+                  )}
                 </FormControl>
                 <Text fontSize="sm" textAlign="left" mt="-20px">
                   <RouterLink
@@ -158,7 +163,8 @@ const Login = () => {
                 </Text>
                 <Button
                   type="submit"
-                  colorScheme="blue"
+                  color={_secTxtColor}
+                  bg={_mainColor}
                   size="lg"
                   fontSize="md"
                 >
@@ -166,7 +172,7 @@ const Login = () => {
                 </Button>
                 <Box position="relative" padding="0.5rem">
                   <Divider color="grey" border="1px" />
-                  <AbsoluteCenter bg="white" px="4">
+                  <AbsoluteCenter bg="white" px="4" fontSize={"16px"}>
                     Or
                   </AbsoluteCenter>
                 </Box>
@@ -179,10 +185,13 @@ const Login = () => {
                 </Box>
                 <Box>
                   <HStack justify="center" gap="">
-                    <Text paddingRight="5px">Already a Member?</Text>
+                    <Text paddingRight="5px" fontSize={"16px"}>
+                      Already a Member?
+                    </Text>
                     <RouterLink
                       to="/SignIn"
                       style={{
+                        fontSize: "16px",
                         fontWeight: "600",
                         textAlign: "left",
                         borderColor: "currentColor",
