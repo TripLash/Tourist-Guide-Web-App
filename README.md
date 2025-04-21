@@ -3,7 +3,10 @@
 Welcome to the **Triplash Web Frontend** repository! This project is the frontend for the Triplash platform, a travel and tour management application. It provides features for users to explore tours, book trips, manage favorites, and access an admin dashboard for managing users and tour guides.
 
 ---
+# check the Video Demo: 
+https://drive.google.com/file/d/1hoLbGNKH0JnYwM7l9pw0s7wBkEANnKRW/view
 
+---------
 ## Table of Contents
 
 - [Features](#features)
