@@ -15,10 +15,11 @@ import {
   Circle,
 } from "@chakra-ui/react";
 import apiClient from "../../services/api-client";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon, StarIcon } from "@chakra-ui/icons";
 import NavBar from "../Nav Bar/NavBar";
 import { Language, TourGuide } from "./types/TourGuide";
+
 
 interface LocationState {
   tourGuide: TourGuide;
@@ -57,6 +58,7 @@ const LanguageItem: React.FC<Language> = ({ language, experience }) => {
     </HStack>
   );
 };
+
 
 const TourGuideInfo: React.FC = () => {
   const [tourCounter, setTourCounter] = useState(0);
@@ -170,9 +172,11 @@ const TourGuideInfo: React.FC = () => {
               <Text fontWeight="bold" fontSize="lg">
                 Guide In
               </Text>
+
               {tourGuide.guideIn.map((location, index) => (
                 <Text key={index}>{location}</Text>
               ))}
+
             </Box>
             <Box marginBottom={"1rem"}>
               <Text fontWeight="bold" fontSize="lg">
@@ -180,7 +184,12 @@ const TourGuideInfo: React.FC = () => {
               </Text>
               <Text> {tourGuide.aboutYou} </Text>
             </Box>
-            <Stack direction="row" spacing={8} alignSelf="center">
+            <Stack
+              direction="row"
+              spacing={8}
+              alignSelf="center"
+              onClick={() => navigate("/Booking")}
+            >
               <Button
                 colorScheme="blue"
                 variant="solid"

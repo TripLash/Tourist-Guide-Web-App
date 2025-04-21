@@ -19,6 +19,7 @@ import {
   Divider,
   HStack,
   Text,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import { AuthContext, AuthContextType } from "./AuthContext";
 import NavBar from "../Authentication/NavBar";
@@ -30,15 +31,14 @@ import { FaFacebook } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import { RiFlag2Line } from "react-icons/ri"; // Import icon for country flag
-import FormContainer from "./formContainer";
 import { useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
+
 import { _mainColor, _secTxtColor } from "../Main/Colors";
 
 const schema = z.object({
   username: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password is not Valid" }).max(50),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }).max(50),
 });
 
 type signUpData = z.infer<typeof schema>;
@@ -46,8 +46,9 @@ type signUpData = z.infer<typeof schema>;
 const Login = () => {
   const authContext = useContext<AuthContextType | undefined>(AuthContext);
   const navigate = useNavigate();
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
+  
   if (!authContext) {
     return null;
   }
@@ -64,6 +65,7 @@ const Login = () => {
       zIndex: 1,
     },
   };
+
   const labelStyle = {
     position: "absolute",
     top: "-13px",
@@ -73,6 +75,7 @@ const Login = () => {
     paddingRight: "5px",
     zIndex: 2,
   };
+
   const {
     register,
     handleSubmit,
@@ -108,10 +111,10 @@ const Login = () => {
                 </Box>
                 <Box textAlign="left">
                   <Heading fontSize="22px" mb="20px">
-                    Welocme Back
+                    Welcome Back
                   </Heading>
                 </Box>
-                <FormControl mb="24px">
+                <FormControl mb="24px" isInvalid={!!errors.username}>
                   <FormLabel sx={labelStyle}>Email or Phone Number</FormLabel>
                   <Input
                     {...register("username")}
@@ -119,8 +122,9 @@ const Login = () => {
                     id="username"
                     sx={inputBorder}
                   />
+                  <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl mb="24px">
+                <FormControl mb="24px" isInvalid={!!errors.password}>
                   <FormLabel sx={labelStyle}>Password</FormLabel>
                   <InputGroup size="md">
                     <Input
